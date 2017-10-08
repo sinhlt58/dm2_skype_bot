@@ -9,3 +9,8 @@ pm2 start/stop/list app_name
 nginx -t
 sudo systemctl reload nginx
 sudo systemctl restart nginx
+
+#Info
+server: ec2 amazon (khacdoi1995@gmail.com)
+domain: dm2bot.tk www.dm2bot.tk (from dot.tk (khacdoi1995@gmail.com))
+bot app: https://dev.botframework.com (sinhlt58@gmail.com)
