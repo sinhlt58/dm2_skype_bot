@@ -1,0 +1,33 @@
+[{
+		"id": "1509480718004",
+		"channelId": "skype",
+		"user": {
+			"id": "29:1OBstwjPaR4lsp7Q7Dsh_3JXUrijZCeGI3ge6oyK849w",
+			"name": "Luu Truong Sinh"
+		},
+		"conversation": {
+			"id": "29:1OBstwjPaR4lsp7Q7Dsh_3JXUrijZCeGI3ge6oyK849w"
+		},
+		"bot": {
+			"id": "28:0805a4e3-ec99-4153-ae84-409ffd4fbac7",
+			"name": "dm2b"
+		},
+		"serviceUrl": "https://smba.trafficmanager.net/apis/"
+	}, {
+		"id": "1509532962394",
+		"channelId": "skype",
+		"user": {
+			"id": "29:1OBstwjPaR4lsp7Q7Dsh_3JXUrijZCeGI3ge6oyK849w",
+			"name": "Luu Truong Sinh"
+		},
+		"conversation": {
+			"isGroup": true,
+			"id": "19:0fdf07b55ddd4995aaaac9b99dc2aa8a@thread.skype"
+		},
+		"bot": {
+			"id": "28:0805a4e3-ec99-4153-ae84-409ffd4fbac7",
+			"name": "dm2b"
+		},
+		"serviceUrl": "https://smba.trafficmanager.net/apis/"
+	}
+]
