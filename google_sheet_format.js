@@ -1,7 +1,8 @@
-var numRowToCreate = 20;
+var numRowToCreate = 30;
 var numColumnToCreate = 8;
 var dm2SpreadSheetId = '1cNptK-AcRUHzEPsI122BwHLe9YwVz0Eaxp4VxtIUCgA';
 var dailyTaskSheetId = 1753802151;
+exports.numRowToCreate = numRowToCreate;
 exports.data = [
 {
     insertDimension: { //insert numRowToCreate rows
@@ -43,12 +44,12 @@ exports.data = [
       fields: "userEnteredFormat(backgroundColor,textFormat,horizontalAlignment)"
     }
 },
-{ //format date cell
+/*{ //format date cell
     repeatCell: {
       range: {
         sheetId: dailyTaskSheetId,
         startRowIndex: 0,
-        endRowIndex: 1,
+        endRowIndex: 10,
         startColumnIndex: 0,
         endColumnIndex: 1
       },
@@ -56,13 +57,13 @@ exports.data = [
         userEnteredFormat: {
           numberFormat: {
             type: "DATE",
-            pattern: "mmm dd yyyy"
+            pattern: "ddd mmm dd yyyy"
           } 
         }
       },
       fields: "userEnteredFormat.numberFormat"
     }
-},
+},*/
 { //format border
     updateBorders: {
       range: {
@@ -334,6 +335,9 @@ exports.data = [
             },
             {
             userEnteredValue: 'Tạ Quang Huy',
+            },
+            {
+            userEnteredValue: 'Trần Văn Bình',
             },
           ],
         },

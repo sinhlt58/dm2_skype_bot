@@ -1,3 +1,5 @@
+'use strict';
+
 var builder = require('botbuilder')
 
 var express = require('express')
@@ -11,6 +13,16 @@ address_manager.load_address();
 
 var fs = require('fs');
 var app = express();
+
+/* Google dialog api*/
+process.env.GOOGLE_APPLICATION_CREDENTIALS = 'google_credential.json'
+const projectID   = 'helloworld-62977';
+const sessionsID  = 'helloworld-session-id';
+const dialogflow  = require('dialogflow');
+const sessionClient   = new dialogflow.SessionsClient();
+const sessionPath     = sessionClient.sessionPath(projectID, sessionsID);
+const weather     = require('weather-js');
+/* Google dialog api end*/
 
 var server = app.listen(process.env.port || process.env.PORT || 3978, function(){
 	var host = server.address().address;
@@ -32,7 +44,8 @@ var bot = new builder.UniversalBot(connector, function(session){
 	var msg = session.message.text;
 	msg = msg.replace("@dm2b ", "");
 	ads = session.message.address;
-	if (msg == "init"){
+	console.log("Here!");
+	/*if (msg == "init"){ //temperary comment
 		ads = session.message.address;
 		session.send("Save current address!");
 	}else if (msg == "find revision"){
@@ -40,8 +53,32 @@ var bot = new builder.UniversalBot(connector, function(session){
 	}else{
 		session.send("Echo: " + msg);
 		io.emit('chat message', msg);
-	}
-	
+	}*/
+	/* Google dialog api*/
+	  const request = {
+	    session: sessionPath,
+	    queryInput: {
+	      text: {
+	        text: msg,
+	        languageCode: 'en-US',
+	      },
+	    },
+	  };
+
+	  // send request and log result
+	  sessionClient
+	    .detectIntent(request)
+	    .then(responses => {
+	      const result = responses[0].queryResult;
+	      var resultText = result.fulfillmentText;
+	      //console.log(result);
+	      //session.send("result.fulfillmentText: " + resultText);//send to Skype
+	      session.send(JSON.stringify(result));
+	    })
+	    .catch(err => {
+	      console.error('ERROR: ', err);
+	    });
+	/* Google dialog api end*/  
 });
 
 /* ------------- Socket IO get messeages from DM2 bot client -------- */

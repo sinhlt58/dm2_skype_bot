@@ -29,12 +29,20 @@ exports.init = function(){
 };
 
 exports.createDailyTasks = function(){
-  var numRowToCreate = 20;
+  var numRowToCreate = 30;
   var numColumnToCreate = 8;
   var dm2SpreadSheetId = '1cNptK-AcRUHzEPsI122BwHLe9YwVz0Eaxp4VxtIUCgA';
   var dailyTaskSheetId = 1753802151;
   
   var batchUpdateRequest = {requests: sheets_data.data};
+
+  //data for insert date to first cell of each row (A Minh's request)
+  var dataFirstCellEachRow = [];
+  for (var i=0; i<sheets_data.numRowToCreate; i++){
+    var d = [];
+    d.push(utils.getDateTime());
+    dataFirstCellEachRow.push(d);
+  }
 
   sheets.spreadsheets.batchUpdate({
     spreadsheetId: dm2SpreadSheetId,
@@ -56,9 +64,14 @@ exports.createDailyTasks = function(){
               values: [
                 [utils.getDateTime(), "Bug ID/Task", "Description", "PIC", "Status", "ETA", "Comment", "Miss Daily Task + ETA"]
               ]
+            },
+            {
+              range: '2. Daily Task!A2:A' + sheets_data.numRowToCreate+1,
+              majorDimension: 'ROWS',
+              values: dataFirstCellEachRow
             }
           ],
-          valueInputOption: "RAW"     
+          valueInputOption: "USER_ENTERED"     
         }
       }, function(err, response){
         if (err){

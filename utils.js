@@ -19,5 +19,6 @@ exports.getDateTime = function() {
     day = (day < 10 ? "0" : "") + day;
 
     //return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec;
-    return day + "/" + month + "/" + year;
+    //return day + "/" + month + "/" + year;
+    return year + "-" + month + "-" + day;
 }
