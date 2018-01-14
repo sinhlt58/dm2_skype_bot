@@ -38,7 +38,7 @@ exports.createDailyTasks = function(){
 
   //data for insert date to first cell of each row (A Minh's request)
   var dataFirstCellEachRow = [];
-  for (var i=0; i<sheets_data.numRowToCreate; i++){
+  for (var i=0; i<sheets_data.numRowToCreate-1; i++){
     var d = [];
     d.push(utils.getDateTime());
     dataFirstCellEachRow.push(d);
@@ -66,7 +66,7 @@ exports.createDailyTasks = function(){
               ]
             },
             {
-              range: '2. Daily Task!A2:A' + sheets_data.numRowToCreate+1,
+              range: '2. Daily Task!A2:A' + sheets_data.numRowToCreate,
               majorDimension: 'ROWS',
               values: dataFirstCellEachRow
             }

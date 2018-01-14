@@ -15,13 +15,7 @@ var fs = require('fs');
 var app = express();
 
 /* Google dialog api*/
-process.env.GOOGLE_APPLICATION_CREDENTIALS = 'google_credential.json'
-const projectID   = 'helloworld-62977';
-const sessionsID  = 'helloworld-session-id';
-const dialogflow  = require('dialogflow');
-const sessionClient   = new dialogflow.SessionsClient();
-const sessionPath     = sessionClient.sessionPath(projectID, sessionsID);
-const weather     = require('weather-js');
+const dialogFlowMgr = require('./dialog_flow_features');
 /* Google dialog api end*/
 
 var server = app.listen(process.env.port || process.env.PORT || 3978, function(){
@@ -54,31 +48,7 @@ var bot = new builder.UniversalBot(connector, function(session){
 		session.send("Echo: " + msg);
 		io.emit('chat message', msg);
 	}*/
-	/* Google dialog api*/
-	  const request = {
-	    session: sessionPath,
-	    queryInput: {
-	      text: {
-	        text: msg,
-	        languageCode: 'en-US',
-	      },
-	    },
-	  };
-
-	  // send request and log result
-	  sessionClient
-	    .detectIntent(request)
-	    .then(responses => {
-	      const result = responses[0].queryResult;
-	      var resultText = result.fulfillmentText;
-	      //console.log(result);
-	      //session.send("result.fulfillmentText: " + resultText);//send to Skype
-	      session.send(JSON.stringify(result));
-	    })
-	    .catch(err => {
-	      console.error('ERROR: ', err);
-	    });
-	/* Google dialog api end*/  
+	dialogFlowMgr.processSkypeUserInput(session, msg);
 });
 
 /* ------------- Socket IO get messeages from DM2 bot client -------- */
@@ -93,6 +63,8 @@ io.on('connection', function(socket){
 		}
 	});
 });
+
+/*DM2 Features */
 
 /*Send proactive messages*/
 function sendProactiveMessage(address){
@@ -129,3 +101,5 @@ var j = schedule.scheduleJob('0 5 10 * * 1-5', function(){
 			 " Have a nice day!\n");
 	bot.send(msg);
 });
+
+/*DM2 Features end*/
