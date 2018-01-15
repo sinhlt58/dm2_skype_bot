@@ -22,3 +22,11 @@ exports.getDateTime = function() {
     //return day + "/" + month + "/" + year;
     return year + "-" + month + "-" + day;
 }
+
+exports.isEmpty = function(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return true;
+}

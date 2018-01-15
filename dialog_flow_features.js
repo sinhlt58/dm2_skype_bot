@@ -14,6 +14,7 @@ const languageCode = 'en-US';
 /* Google dialog api end*/
 
 var mongodbClient = require('./mongodb_client');
+var utils = require('./utils');
 
 exports.processSkypeUserInput = function (skypeSession, msg) {
 	//get skype user info
@@ -35,26 +36,102 @@ exports.processSkypeUserInput = function (skypeSession, msg) {
 	      const result = responses[0].queryResult;
 	      var fulfillmentText = result.fulfillmentText;
 	      var intentName = result.intent.displayName;
-
+	      var params = structjson.structProtoToJson(result.parameters);
 	      //all the logic for each intent
 	      //greeting intent
 	      if (intentName == "greeting.new"){
 		      	//check if the user is in the database yet ?
 		      	//mongodb here
 		      	//if find a user then say hi
-		      	//mongodbClient.insertUser({skypeUserId: skypeUserId, skypeUserName, skypeUserName});
-		      	mongodbClient.findUserBySkypeId(skypeUserId, function(result){
-			      	console.log(result);	
+		      	mongodbClient.findUserBySkypeId(skypeUserId, function(error, result){	
 			      	if (result){
-			      		sendEvent("event_greeting_have_met", {user_name: result.skypeUserName}, function(responses){
+			      		sendEvent("event_greeting_have_met", {user_name: result['skype-user-name']}, function(responses){
 			      			skypeSession.send(responses[0].queryResult.fulfillmentText);
 			      		});
-			      	}else{
+			      	}
+			      	else{
 			      		skypeSession.send(fulfillmentText);
 			      	}		
 		      	});
-		      	
-	      }else{
+	      }
+	      else if(intentName == "greeting.new.info.create"){
+	      		//if all params are not empty then insert to mongodb
+	      		var isNeedToInsert = true;
+	      		console.log(params['user-name']);
+	      		if (!utils.isEmpty(params)){
+		      		for (var key in params){
+		      			if (params.hasOwnProperty(key)){
+		      				if (params[key] == ""){
+		      					isNeedToInsert = false;	
+		      				}
+		      			}else{
+		      				isNeedToInsert = false;
+		      			}
+		      			if (!isNeedToInsert){
+		      				break;
+		      			}	
+		      		}	
+	      		}else{
+	      			isNeedToInsert = false;
+	      		}
+	      		//if the user has entered all the info
+	      		if (isNeedToInsert){
+	      			//insert to mongodb
+	      			var userData = params;
+	      			userData['skype-user-id'] = skypeUserId;
+	      			userData['skype-user-name'] = skypeUserName;
+	      			console.log("Insert userdata: " + JSON.stringify(userData));
+	      			mongodbClient.insertUser(userData, function(error, result){
+	      				if (error) throw error;
+	      				skypeSession.send(fulfillmentText);
+	      			});
+	      		}else{
+	      			skypeSession.send(fulfillmentText);
+	      		}
+	      }
+	      //view info
+	      else if (intentName == "info.show"){
+	      		mongodbClient.findUserBySkypeId(skypeUserId, function(error, result){
+			      	if (error) throw error;
+			      	if (result){
+			      		var infoMesg = "Here is your info!<br/>";
+			      		infoMesg += "User name: " 		+ result['user-name'] + '<br/>';
+			      		infoMesg += "Birth day: " 		+ result['birth-day'] + '<br/>';
+			      		infoMesg += "HAN email: " 		+ result['han-email'] + '<br/>';
+			      		infoMesg += "HAN team: "  		+ result['han-team'] + '<br/>';
+			      		infoMesg += "HAN department: "  + result['han-department'] + '<br/>';
+			      		infoMesg += "HAN position: "    + result['han-position'] + '<br/>';
+			      		infoMesg += "Skype name: "      + result['skype-user-name'] + '<br/>';
+			      		infoMesg += "Skype id: "  	    + result['skype-user-id'] + '<br/>';
+			      		skypeSession.send(infoMesg);
+			      	}
+			      	else{ //if haven't met yet!
+			      		skypeSession.send(fulfillmentText);
+			      	}		      			
+		      	});
+	      }
+	      //update info
+	      //delete info
+	      else if (intentName == "info.delete"){
+	      		mongodbClient.findUserBySkypeId(skypeUserId, function(error, result){
+			      	if (error) throw error;
+			      	if (result){
+					    mongodbClient.deleteUser(skypeUserId, function(error, result){
+					      	if (error) throw error;
+					      	if (result){
+					      		skypeSession.send(fulfillmentText);
+					      	}
+					      	else{ //if haven't met yet!
+					      		skypeSession.send("There is an error!");
+					      	}		      			
+				      	});
+			      	}
+			      	else{ //if haven't met yet!
+			      		skypeSession.send("We haven't met yet!");
+			      	}		      			
+		      	});
+	      }
+	      else{
 	      		skypeSession.send(fulfillmentText);
 	      }
 	}).catch(err => {

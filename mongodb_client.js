@@ -7,19 +7,23 @@ MongoClient.connect(url, function(err, db){
 });
 
 exports.findUserBySkypeId = function(skypeId, callback){
-	var result = null;
-	currentDb.collection("users").findOne({skypeUserId: skypeId}, function(err, result){
-		if (err) throw err;
-		callback(result);
+	currentDb.collection("users").findOne({"skype-user-id": skypeId}, function(err, result){
+		callback(err, result);
 	});
 };
 
-exports.insertUser = function(userData){
-	currentDb.collection("users").insertOne(userData, function(err, res) {
-	    if (err) throw err;
+exports.insertUser = function(userData, callback){
+	currentDb.collection("users").insertOne(userData, function(err, result) {
+	    callback(err, result);
 	});
 };
 
-exports.editUser = function(){
+exports.updateUser = function(skypeId, callback){
 
 };
+
+exports.deleteUser = function(skypeId, callback){
+	currentDb.collection("users").deleteOne({"skype-user-id": skypeId}, function(err, result){
+		callback(err, result);
+	});
+}

@@ -33,3 +33,5 @@ https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/#install-mong
 sudo systemctl start mongodb
 
 sudo systemctl status mongodb
+
+mongo --host 127.0.0.1:27017
